@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 def match_templat(where,what,threshold,test=False):
     res = cv2.matchTemplate(where,what,cv2.TM_CCOEFF_NORMED)
     loc = np.where( res >= threshold)
