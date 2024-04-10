@@ -41,7 +41,16 @@ CTRL = 0x1D
 SPACE = 0x39
 ENTER  = 0x1C
 SPACE = 0x39
+#numbers
 ONE = 0x02
+TWO = 0x03
+THREE = 0x04
+FOUR = 0x05
+FIVE = 0x06
+SIX  = 0x07
+SEVEN = 0x08
+EIGHT = 0x09
+NINE = 0x0A
 #key pad arrow keys num lock can mess it up
 UP_ARROW = 0xC8
 DOWN_ARROW = 0xD0
@@ -107,27 +116,6 @@ def PR(hexKeyCode , delay = 0.05):
     ReleaseKey(hexKeyCode)
 
 
-def enter(delay=0.02):
-    PressKey(ENTER)
-    time.sleep(delay)
-    ReleaseKey(ENTER)
-
-
-def paste(delay=0.02):
-    PressKey(CTRL)
-    PressKey(V)
-    time.sleep(delay)
-    ReleaseKey(CTRL)
-    ReleaseKey(V)
-
-
-def shift_min(delay=0.02):
-    PressKey(LSHIFT)
-    PressKey(MINUS)
-    time.sleep(delay)
-    ReleaseKey(LSHIFT)
-    ReleaseKey(MINUS)
-
 def WASD(dir,delay = 0.02,mode = "Arrow"):
     if mode == "Arrow":
         if dir == 'U':
@@ -139,122 +127,6 @@ def WASD(dir,delay = 0.02,mode = "Arrow"):
         elif dir == 'L':
             PR(LEFT_ARROW,delay)
 
-
-def twokeys():
-    pass
-
-# I only learned that pyauto gui had the write function after I wrote this :(
-def typeing(word,delay=0.1):
-    for i in word:
-        if i == 'a':
-            PressKey(A)
-            time.sleep(delay)
-            ReleaseKey(A)
-        elif i == 'b':
-            PressKey(B)
-            time.sleep(delay)
-            ReleaseKey(B)
-        elif i == 'c':
-            PressKey(C)
-            time.sleep(delay)
-            ReleaseKey(C)
-        elif i == 'd':
-            PressKey(D)
-            time.sleep(delay)
-            ReleaseKey(D)
-        elif i == 'e':
-            PressKey(E)
-            time.sleep(delay)
-            ReleaseKey(E)
-        elif i == 'f':
-            PressKey(F)
-            time.sleep(delay)
-            ReleaseKey(F)
-        elif i == 'g':
-            PressKey(G)
-            time.sleep(delay)
-            ReleaseKey(G)
-        elif i == 'h':
-            PressKey(H)
-            time.sleep(delay)
-            ReleaseKey(H)
-        elif i == 'i':
-            PressKey(I)
-            time.sleep(delay)
-            ReleaseKey(I)
-        elif i == 'j':
-            PressKey(J)
-            time.sleep(delay)
-            ReleaseKey(J)
-        elif i == 'k':
-            PressKey(K)
-            time.sleep(delay)
-            ReleaseKey(K)
-        elif i == 'l':
-            PressKey(L)
-            time.sleep(delay)
-            ReleaseKey(L)
-        elif i == 'm':
-            PressKey(M)
-            time.sleep(delay)
-            ReleaseKey(M)
-        elif i == 'n':
-            PressKey(N)
-            time.sleep(delay)
-            ReleaseKey(N)
-        elif i == 'o':
-            PressKey(O)
-            time.sleep(delay)
-            ReleaseKey(O)
-        elif i == 'p':
-            PressKey(P)
-            time.sleep(delay)
-            ReleaseKey(P)
-        elif i == 'q':
-            PressKey(Q)
-            time.sleep(delay)
-            ReleaseKey(Q)
-        elif i == 'r':
-            PressKey(R)
-            time.sleep(delay)
-            ReleaseKey(R)
-        elif i == 's':
-            PressKey(S)
-            time.sleep(delay)
-            ReleaseKey(S)
-        elif i == 't':
-            PressKey(T)
-            time.sleep(delay)
-            ReleaseKey(T)
-        elif i == 'u':
-            PressKey(U)
-            time.sleep(delay)
-            ReleaseKey(U)
-        elif i == 'v':
-            PressKey(V)
-            time.sleep(delay)
-            ReleaseKey(V)
-        elif i == 'w':
-            PressKey(W)
-            time.sleep(delay)
-            ReleaseKey(W)
-        elif i == 'x':
-            PressKey(X)
-            time.sleep(delay)
-            ReleaseKey(X)
-        elif i == 'y':
-            PressKey(Y)
-            time.sleep(delay)
-            ReleaseKey(Y)
-        elif i == 'z':
-            PressKey(Z)
-            time.sleep(delay)
-            ReleaseKey(Z)
-        elif i == ' ':
-            PressKey(SPACE)
-            time.sleep(delay)
-            ReleaseKey(SPACE)
-
         
 if __name__ == '__main__':
     time.sleep(2)
@@ -263,8 +135,3 @@ if __name__ == '__main__':
     WASD("U",1)
     WASD("L",1)
     WASD("R",1)
-    '''
-    while True:
-        PressKey(M)
-
-    '''

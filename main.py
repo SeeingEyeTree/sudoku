@@ -5,7 +5,7 @@ import numpy as np
 import pyautogui
 from grab_screen import grab_screen
 from rel_cords import abs2rel
-from keys import WASD
+from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Tile
@@ -76,12 +76,10 @@ for i in range(9):
 			box = 8
 
 		obj.box = box
-#print(board)
 
-
-if False:
+if True:
 	while True:
-		match_templat(board_img_gray,four_w,0.9,True)
+		match_templat(board_img_gray,six_w,0.9,True)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 	            cv2.destroyAllWindows()
 	            break
@@ -91,26 +89,14 @@ board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
 board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
 board = set_up_board(board , match_templat(board_img_gray,four_w,0.9) , 4)
 board = set_up_board(board , match_templat(board_img_gray,five_w,0.9) , 5)
-board = set_up_board(board , match_templat(board_img_gray,six_w,0.81,) , 6)
+board = set_up_board(board , match_templat(board_img_gray,six_w,0.9,) , 6)
 board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
 board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
 board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
-#print(board)
-#print(board[5][5].box)
-'''
-print(board[1][0].box)
-print(board[5][0].box)
-print(board[6][0].box)
-print(board[2][3].box)
-print(board[5][3].box)
-print(board[7][4].box)
-print(board[0][8].box)
-print(board[5][8].box)
-print(board[7][8].box)
-'''
+time.sleep(4)
 
-for i in range(50):
+for i in range(300):
 	for i in board:
 		for obj in i:
 			if obj.value == 0:
@@ -139,25 +125,31 @@ for i in range(50):
 						pass
 
 
-
-
-
-
 for i in board:
 	for j in i:
-		print(j.value)
+		if j.value == 1:
+			PR(ONE)
+		elif j.value == 2:
+			PR(TWO)
+		elif j.value == 3:
+			PR(THREE)
+		elif j.value == 4:
+			PR(FOUR)
+		elif j.value == 5:
+			PR(FIVE)
+		elif j.value == 6:
+			PR(SIX)
+		elif j.value == 7:
+			PR(SEVEN)
+		elif j.value ==8:
+			PR(EIGHT)
+		elif j.value ==9:
+			PR(NINE)
 
+		WASD('D',0.05)
+	for i in range(9):
+		WASD("U")
 
-'''
-while True:
-	y1,x1=match_templat(board_img_gray,one_w,0.9)
-	print(np.round(x1/84))
-	print(np.round(y1/84))
-	if cv2.waitKey(25) & 0xFF == ord('q'):
-		cv2.destroyAllWindows()
-		break
-'''
-
-
+	WASD("R")
 
 
