@@ -6,9 +6,11 @@ import pyautogui
 from grab_screen import grab_screen
 from rel_cords import abs2rel
 from keys import WASD
-
+from match_templat import match_templat
+from set_up_board import set_up_board
 #website used on a chrome browser with book mark bar on https://sudoku.com
 
+debug = False # I know there is a module just don't feel like learing it right now 
 
 # read in all refrance images
 one_w=imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
@@ -29,55 +31,46 @@ time.sleep(4)
 
 board_img = grab_screen(abs2rel(383,380)+abs2rel(1132,1129))
 board_img_gray = cvtColor(board_img,COLOR_RGB2GRAY)
-"""
+
+
+
 while True:
 	cv2.imshow('window',board_img)
 	if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
-"""
 
 #read values into array from img
 
-
-def match_templat(where,what,threshold,test=False):
-    res = cv2.matchTemplate(where,what,TM_CCOEFF_NORMED)
-    loc = np.where( res >= threshold)
-    if test:
-	    whereRGB=cv2.cvtColor(where,cv2.COLOR_GRAY2RGB)
-	    w1, h1 = what.shape[::-1]
-	    for pt1 in zip(*loc[::-1]):
-	            cv2.rectangle(whereRGB, pt1, (pt1[0] + w1, pt1[1] + h1), (0,0,255), 2)
-	    cv2.imshow('matches',whereRGB)
-	    print(loc)
-    y=loc[1]
-    x=loc[0]
-    return x,y
-
-
 thres = 0.9
 
-y1,x1 = match_templat(board_img_gray,one_w,thres)
-'''
-y2,x2 = match_templat(board_img_gray,two_w,thres)
-y3,x3 = match_templat(board_img_gray,three_w,thres)
-y4,x4 = match_templat(board_img_gray,four_w,thres)
-y5,x5 = match_templat(board_img_gray,five_w,thres)
-y6,x6 = match_templat(board_img_gray,six_w,thres)
-y7,x7 = match_templat(board_img_gray,seven_w,thres)
-y8,x8 = match_templat(board_img_gray,eight_w,thres)
-y9,x9 = match_templat(board_img_gray,nine_w,thres)
-'''
+board = np.zeros((9,9))
+#print(board)
+
+test = match_templat(board_img_gray,one_w,thres)
 
 
+board = set_up_board(board , match_templat(board_img_gray,one_w,thres) , 1)
+board = set_up_board(board , match_templat(board_img_gray,two_w,thres) , 2)
+board = set_up_board(board , match_templat(board_img_gray,three_w,thres) , 3)
+board = set_up_board(board , match_templat(board_img_gray,four_w,thres) , 4)
+board = set_up_board(board , match_templat(board_img_gray,five_w,thres) , 5)
+board = set_up_board(board , match_templat(board_img_gray,six_w,thres) , 6)
+board = set_up_board(board , match_templat(board_img_gray,seven_w,thres) , 7)
+board = set_up_board(board , match_templat(board_img_gray,eight_w,thres) , 8)
+board = set_up_board(board , match_templat(board_img_gray,nine_w,thres) , 9)
+
+print(board)
+
+'''
 while True:
-	y1,x1=match_templat(board_img_gray,one_w,0.9,True)
+	y1,x1=match_templat(board_img_gray,one_w,0.9)
 	print(np.round(x1/84))
 	print(np.round(y1/84))
 	if cv2.waitKey(25) & 0xFF == ord('q'):
 		cv2.destroyAllWindows()
 		break
-
+'''
 
 
 
