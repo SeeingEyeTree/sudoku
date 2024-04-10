@@ -1,6 +1,5 @@
-from numpy import round, delete
+from numpy import round, delete, array
 from classes import Tile
-
 def set_up_board(board, new,value):
 	y = round(new[0]/84)
 	x = round(new[1]/84)
@@ -36,6 +35,7 @@ def set_up_board(board, new,value):
 		elif x[i]>=6 and y[i]>=6:
 			box = 8
 
-
-		board[int(x[i])][int(y[i])] = Tile(value , int(x[i]) , int(y[i]), box)
+		obj = Tile(value , int(x[i]) , int(y[i]), box)
+		board[int(x[i])][int(y[i])] = obj 
+		obj.possibilities = array([])
 	return board

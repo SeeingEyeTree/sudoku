@@ -79,7 +79,7 @@ for i in range(9):
 
 if False:
 	while True:
-		match_templat(board_img_gray,six_w,0.9,True)
+		match_templat(board_img_gray,two_w,0.9,True)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 	            cv2.destroyAllWindows()
 	            break
@@ -96,7 +96,7 @@ board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
 time.sleep(1)
 
-for i in range(2):
+for i in range(50):
 	for i in board:
 		for obj in i:
 			if obj.value == 0:
@@ -119,13 +119,20 @@ for i in range(2):
 
 
 				obj.trim(same_box , same_h_line, same_v_line)
+				obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
+				obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
+				obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
+
+disp_board = [[0 for col in range(9)] for row in range(9)]
 
 
 
 
+'''
 for i in board:
 	for j in i:
-		'''
+		print(j.value)
+		
 		if j.value == 1:
 			PR(ONE)
 		elif j.value == 2:
@@ -149,8 +156,20 @@ for i in board:
 	for i in range(9):
 		WASD("U",0.001)
 
-	WASD("R",0.001)
-	'''
-	print(j.value)
+	WASD("R",0.001)	
+'''	
+#should proabbly fix the indexing being backordss but would have to fix it all then :(
+for i in range(9):
+	for j in range(9):
+		disp_board[i][j] = board[j][i].value
 
+print(*disp_board, sep='\n')
 
+print(board[6][1].possibilities)
+#print(board[6][1].box_mates)
+#print(board[6][1].h_line_mates)
+#print(board[6][1].needed_v)
+
+for i in range(9):
+	#print(board[7][i].value, board[7][i].possibilities)
+	print(board[i][5].value, board[i][5].possibilities)
