@@ -1,10 +1,9 @@
 from numpy import round, delete
-
-
+from classes import Tile
 
 def set_up_board(board, new,value):
-	x = round(new[0]/84)
-	y = round(new[1]/84)
+	y = round(new[0]/84)
+	x = round(new[1]/84)
 	#scufed solution just run it a bunch of times can add acutall logic later
 	# deleats all duplicats found with matching
 	for i in range(100):
@@ -13,9 +12,30 @@ def set_up_board(board, new,value):
 				if x[i] == x[i+1] and y[i] == y[i+1]:
 					x = delete(x , i)
 					y = delete(y , i)
-	
 
 	for i in range(len(x)):
-		board[int(x[i]),int(y[i])] = value
-	
+
+		if x[i]<=2 and y[i]<=2:
+			box = 0
+		elif 3<=x[i]<=5 and y[i]<=2:
+			box = 1
+		elif 6<=x[i] and y[i]<=2:
+			box = 2
+
+		elif x[i]<=2 and 3<=y[i]<=5:
+			box = 3
+		elif 3<=x[i]<=5 and 3<=y[i]<=5:
+			box = 4
+		elif x[i]>=6 and 3<=y[i]<=5:
+			box = 5
+
+		elif x[i]<=2 and y[i]>=6:
+			box = 6
+		elif 3<=x[i]<=5 and y[i]>=6:
+			box = 7
+		elif x[i]>=6 and y[i]>=6:
+			box = 8
+
+
+		board[int(x[i])][int(y[i])] = Tile(value , int(x[i]) , int(y[i]), box)
 	return board
