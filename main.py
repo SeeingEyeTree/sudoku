@@ -8,7 +8,7 @@ from rel_cords import abs2rel
 from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
-from classes import Tile
+from classes import Cell
 #website used on a chrome browser with book mark bar on https://sudoku.com
 
 debug = False # I know there is a module just don't feel like learing it right now 
@@ -45,7 +45,7 @@ if debug:
 
 thres = 0.81
 
-board = [[Tile(0,0,0,0) for col in range(9)] for row in range(9)]
+board = [[Cell(0,0,0,0) for col in range(9)] for row in range(9)]
 
 for i in range(9):
 	for j in range(9): 
@@ -79,7 +79,7 @@ for i in range(9):
 
 if False:
 	while True:
-		match_templat(board_img_gray,three_w,0.9,True)
+		match_templat(board_img_gray,one_w,0.9,True)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
 	            cv2.destroyAllWindows()
 	            break
@@ -96,7 +96,7 @@ board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
 time.sleep(1)
 
-for i in range(10):
+for x in range(20):
 	for i in board:
 		for obj in i:
 			if obj.value == 0:
@@ -119,14 +119,12 @@ for i in range(10):
 
 
 				obj.trim(same_box , same_h_line, same_v_line)
+				if x>10:
+					obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
+					obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
+					obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
 
-				#obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
-				#print(obj.box_mates[0].value)
-				obj.trim(same_box , same_h_line, same_v_line)
-				#obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
-				obj.trim(same_box , same_h_line, same_v_line)
-				#obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
-				obj.trim(same_box , same_h_line, same_v_line)
+
 
 disp_board = [[0 for col in range(9)] for row in range(9)]
 
@@ -136,7 +134,6 @@ disp_board = [[0 for col in range(9)] for row in range(9)]
 if True:
 	for i in board:
 		for j in i:
-			print(j.value)
 			
 			if j.value == 1:
 				PR(ONE)
@@ -170,7 +167,7 @@ for i in range(9):
 
 print(*disp_board, sep='\n')
 
-print(board[0][7].needed_b)
-print(board[0][7].needed_h)
-print(board[0][7].needed_v)
+print('box',board[0][0].needed_b)
+print('h line', board[0][0].needed_h)
+print('v line', board[0][0].needed_v)
 

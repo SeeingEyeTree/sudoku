@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Tile():
+class Cell():
 
 	def __init__(self, value,x,y,box):
 		self.value = value
@@ -58,7 +58,6 @@ class Tile():
 				candidates[0][0].possibilities = np.array([])
 				#print('replace(', candidates[0][0].x,candidates[0][0].y,')', candidates[0][1])
 
-		return mates
 
 
 
