@@ -25,3 +25,16 @@ class Tile():
 
 		if len(self.possibilities) == 1:
 			self.value =  self.possibilities[0]
+
+
+class Row():
+	def __init__(self, Tiles):
+		self.needed = np.array([1,2,3,4,5,6,7,8,9])
+		self.Tiles = Tiles
+
+	def trim_row(self):
+		for i in Tiles:
+			self.needed = np.delete(self.needed ,np.where(self.needed == i.value))
+
+
+

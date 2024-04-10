@@ -8,7 +8,7 @@ from rel_cords import abs2rel
 from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
-from classes import Tile
+from classes import Tile, Row
 #website used on a chrome browser with book mark bar on https://sudoku.com
 
 debug = False # I know there is a module just don't feel like learing it right now 
@@ -77,7 +77,7 @@ for i in range(9):
 
 		obj.box = box
 
-if True:
+if False:
 	while True:
 		match_templat(board_img_gray,six_w,0.9,True)
 		if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -94,9 +94,9 @@ board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
 board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
 board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
-time.sleep(4)
+time.sleep(1)
 
-for i in range(300):
+for i in range(100):
 	for i in board:
 		for obj in i:
 			if obj.value == 0:
@@ -119,10 +119,8 @@ for i in range(300):
 
 
 				obj.trim(same_box , same_h_line, same_v_line)
-				if obj.x == 1 and obj.y == 8:
-					for i in same_box:
-						#print(i.value)
-						pass
+
+
 
 
 for i in board:
@@ -146,10 +144,10 @@ for i in board:
 		elif j.value ==9:
 			PR(NINE)
 
-		WASD('D',0.05)
+		WASD('D',0.001)
 	for i in range(9):
-		WASD("U")
+		WASD("U",0.001)
 
-	WASD("R")
+	WASD("R",0.001)
 
 
