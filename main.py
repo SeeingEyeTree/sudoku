@@ -8,7 +8,7 @@ from rel_cords import abs2rel
 from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
-from classes import Tile, Row
+from classes import Tile
 #website used on a chrome browser with book mark bar on https://sudoku.com
 
 debug = False # I know there is a module just don't feel like learing it right now 
@@ -96,7 +96,7 @@ board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
 time.sleep(1)
 
-for i in range(100):
+for i in range(2):
 	for i in board:
 		for obj in i:
 			if obj.value == 0:
@@ -111,10 +111,10 @@ for i in range(100):
 						if obj.box == comp_obj.box:
 							same_box.append(comp_obj)
 
-						if obj.x == comp_obj.x:
+						if obj.y == comp_obj.y:
 							same_h_line.append(comp_obj)
 
-						if obj.y == comp_obj.y:
+						if obj.x == comp_obj.x:
 							same_v_line.append(comp_obj)
 
 
@@ -125,6 +125,7 @@ for i in range(100):
 
 for i in board:
 	for j in i:
+		'''
 		if j.value == 1:
 			PR(ONE)
 		elif j.value == 2:
@@ -149,5 +150,7 @@ for i in board:
 		WASD("U",0.001)
 
 	WASD("R",0.001)
+	'''
+	print(j.value)
 
 
