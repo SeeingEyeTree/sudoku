@@ -22,113 +22,11 @@ seven_w=imread("./images/seven_w.png",cv2.IMREAD_GRAYSCALE)
 eight_w=imread("./images/eight_w.png",cv2.IMREAD_GRAYSCALE)
 nine_w=imread("./images/nine_w.png",cv2.IMREAD_GRAYSCALE)
 
-#one_w=cv2.imread("C:/Users/malco/OneDrive/Documents/GitHub/sudoku/images/one_w.png")
-
 #bounds for a 2560 * 1600 screen top (383,380) bot (1132,1129)
 #one cell is ~83.2222222222 84 pixles tall and wide 84*84
 #time.sleep(1)
 
-board_img = grab_screen(abs2rel(383,380)+abs2rel(1132,1129))
-board_img_gray = cvtColor(board_img,COLOR_RGB2GRAY)
 
-
-
-thres = 0.81
-
-board = [[Cell(0,0,0,0) for col in range(9)] for row in range(9)]
-
-for i in range(9):
-    for j in range(9): 
-        obj = board[i][j]
-        obj.x = i
-        obj.y = j
-
-
-        if i<=2 and j<=2:
-            box = 0
-        elif 3<=i<=5 and j<=2:
-            box = 1
-        elif 6<=i and j<=2:
-            box = 2
-
-        elif i<=2 and 3<=j<=5:
-            box = 3
-        elif 3<=i<=5 and 3<=j<=5:
-            box = 4
-        elif i>=6 and 3<=j<=5:
-            box = 5
-
-        elif i<=2 and j>=6:
-            box = 6
-        elif 3<=i<=5 and j>=6:
-            box = 7
-        elif i>=6 and j>=6:
-            box = 8
-
-        obj.box = box
-
-if False:
-    while True:
-        match_templat(board_img_gray,nine_w,0.85,True)
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
-            break
-
-
-disp_board = [[0 for col in range(9)] for row in range(9)]
-board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
-board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
-board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
-board = set_up_board(board , match_templat(board_img_gray,four_w,0.9) , 4)
-board = set_up_board(board , match_templat(board_img_gray,five_w,0.9) , 5)
-board = set_up_board(board , match_templat(board_img_gray,six_w,0.9,) , 6)
-board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
-board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
-board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
-
-
-# Set up the same box and line since it cannot be done when intilised
-all_box = []
-all_col = []
-all_row = []
-for i in board:
-    for obj in i:
-        same_box = []
-        same_h_line = []
-        same_v_line = []
-        for comp_i in board:
-            for comp_obj in comp_i:
-                # might be able to put everything under the same umbrel but nice to seprate out might be useful later
-                # will catch itself but since value is 0 does not matter
-                if obj.box == comp_obj.box:
-                    same_box.append(comp_obj)
-
-                if obj.y == comp_obj.y:
-                    same_h_line.append(comp_obj)
-
-                if obj.x == comp_obj.x:
-                    same_v_line.append(comp_obj)
-
-
-        
-        obj.box_mates = same_box
-        obj.h_line_mates = same_h_line
-        obj.v_line_mates = same_v_line
-
-        all_box.append(BHV(same_box))
-        all_col.append(BHV(same_v_line))
-        all_row.append(BHV(same_h_line))
-# group boxes and rows toghet to better find pairs that can elemi pos
-row_box_group = []
-
-for r in all_col:
-    for pr in r.parts:
-        for b in all_box:
-            for pb in b.parts:
-                if pr.x == pb.x:
-                    row_box_group.append([r,b])
-
-row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
 
 def any_good(listp, condtion,opprand='e'):
     for i in listp:
@@ -144,30 +42,127 @@ def trim_all(board):
             obj.trim(obj.box_mates , obj.h_line_mates, obj.v_line_mates)
 
 
-
-for x in range(30):
-    trim_all(board)
-    for i in all_row:
-        i.last_one()
-    for i in all_box:
-        i.last_one()
-    for i in all_col:
-        i.last_one()
-    if x>10:
-        for i in row_box_group:
-            i[0].pairs(i[0],i[1])
-
-if True:
-    input_board(board)
+def main():
+    board_img = grab_screen(abs2rel(383,380)+abs2rel(1132,1129))
+    board_img_gray = cvtColor(board_img,COLOR_RGB2GRAY)
+    board = [[Cell(0,0,0,0) for col in range(9)] for row in range(9)]
+    for i in range(9):
+        for j in range(9): 
+            obj = board[i][j]
+            obj.x = i
+            obj.y = j
 
 
-#should proabbly fix the indexing being backordss but would have to fix it all then :(
-disp_board = [[0 for col in range(9)] for row in range(9)]
-for i in range(9):
-    for j in range(9):
-        disp_board[i][j] = board[j][i].value
+            if i<=2 and j<=2:
+                box = 0
+            elif 3<=i<=5 and j<=2:
+                box = 1
+            elif 6<=i and j<=2:
+                box = 2
 
-print(*disp_board, sep='\n')
-#print(len(row_box_group))
+            elif i<=2 and 3<=j<=5:
+                box = 3
+            elif 3<=i<=5 and 3<=j<=5:
+                box = 4
+            elif i>=6 and 3<=j<=5:
+                box = 5
+
+            elif i<=2 and j>=6:
+                box = 6
+            elif 3<=i<=5 and j>=6:
+                box = 7
+            elif i>=6 and j>=6:
+                box = 8
+
+            obj.box = box
+
+    if False:
+        while True:
+            match_templat(board_img_gray,nine_w,0.85,True)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
 
 
+    disp_board = [[0 for col in range(9)] for row in range(9)]
+    board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
+    board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
+    board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
+    board = set_up_board(board , match_templat(board_img_gray,four_w,0.9) , 4)
+    board = set_up_board(board , match_templat(board_img_gray,five_w,0.9) , 5)
+    board = set_up_board(board , match_templat(board_img_gray,six_w,0.9,) , 6)
+    board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
+    board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
+    board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
+
+
+    # Set up the same box and line since it cannot be done when intilised
+    all_box = []
+    all_col = []
+    all_row = []
+    for i in board:
+        for obj in i:
+            same_box = []
+            same_h_line = []
+            same_v_line = []
+            for comp_i in board:
+                for comp_obj in comp_i:
+                    # might be able to put everything under the same umbrel but nice to seprate out might be useful later
+                    # will catch itself but since value is 0 does not matter
+                    if obj.box == comp_obj.box:
+                        same_box.append(comp_obj)
+
+                    if obj.y == comp_obj.y:
+                        same_h_line.append(comp_obj)
+
+                    if obj.x == comp_obj.x:
+                        same_v_line.append(comp_obj)
+
+
+            
+            obj.box_mates = same_box
+            obj.h_line_mates = same_h_line
+            obj.v_line_mates = same_v_line
+
+            all_box.append(BHV(same_box))
+            all_col.append(BHV(same_v_line))
+            all_row.append(BHV(same_h_line))
+    # group boxes and rows toghet to better find pairs that can elemi pos
+    row_box_group = []
+
+    for r in all_col:
+        for pr in r.parts:
+            for b in all_box:
+                for pb in b.parts:
+                    if pr.x == pb.x:
+                        row_box_group.append([r,b])
+
+    row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
+
+    for x in range(200):
+        trim_all(board)
+        for i in all_row:
+            i.last_one()
+        for i in all_box:
+            i.last_one()
+        for i in all_col:
+            i.last_one()
+        if x>10:
+            for i in row_box_group:
+                i[0].pairs(i[0],i[1])
+
+    if True:
+        input_board(board)
+
+
+    #should proabbly fix the indexing being backordss but would have to fix it all then :(
+    disp_board = [[0 for col in range(9)] for row in range(9)]
+    for i in range(9):
+        for j in range(9):
+            disp_board[i][j] = board[j][i].value
+
+    print(*disp_board, sep='\n')
+
+
+if __name__ == '__main__':
+    main()
