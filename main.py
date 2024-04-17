@@ -2,16 +2,14 @@ import cv2
 from cv2 import cvtColor,imread,COLOR_RGB2GRAY, TM_CCOEFF_NORMED
 import time
 import numpy as np
-import pyautogui as pag
 from grab_screen import grab_screen
 from rel_cords import abs2rel
-from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Cell, BHV
+from input_board import input_board
 #website used on a chrome browser with book mark bar on https://sudoku.com
-time.sleep(3)
-PYTHONBREAKPOINT =0# I know there is a module just don't feel like learing it right now 
+PYTHONBREAKPOINT = 0 # I know there is a module just don't feel like learing it right now 
 
 # read in all refrance images
 one_w=imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
@@ -70,11 +68,13 @@ for i in range(9):
         obj.box = box
 
 if False:
-        while True:
-                match_templat(board_img_gray,nine_w,0.85,True)
-                if cv2.waitKey(25) & 0xFF == ord('q'):
-                        cv2.destroyAllWindows()
-                        break
+    while True:
+        match_templat(board_img_gray,nine_w,0.85,True)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+
+
 disp_board = [[0 for col in range(9)] for row in range(9)]
 board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
 board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
@@ -115,16 +115,28 @@ for i in board:
         obj.h_line_mates = same_h_line
         obj.v_line_mates = same_v_line
 
-    all_box.append(BHV(same_box))
-    all_col.append(BHV(same_v_line))
-    all_row.append(BHV(same_h_line))
+        all_box.append(BHV(same_box))
+        all_col.append(BHV(same_v_line))
+        all_row.append(BHV(same_h_line))
+# group boxes and rows toghet to better find pairs that can elemi pos
+row_box_group = []
 
+for r in all_col:
+    for pr in r.parts:
+        for b in all_box:
+            for pb in b.parts:
+                if pr.x == pb.x:
+                    row_box_group.append([r,b])
 
+row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
 
-found=False
-step=20
-def any_good(list, condtion1, condtion2):
-    pass
+def any_good(listp, condtion,opprand='e'):
+    for i in listp:
+        if opprand == 'e':
+            if i == condition:
+                return True
+    return False
+
 
 def trim_all(board):
     for i in board:
@@ -133,7 +145,7 @@ def trim_all(board):
 
 
 
-for x in range(100):
+for x in range(30):
     trim_all(board)
     for i in all_row:
         i.last_one()
@@ -141,58 +153,21 @@ for x in range(100):
         i.last_one()
     for i in all_col:
         i.last_one()
-
-
-
-disp_board = [[0 for col in range(9)] for row in range(9)]
-pag.click(420,420)
-
-
+    if x>10:
+        for i in row_box_group:
+            i[0].pairs(i[0],i[1])
 
 if True:
-    for i in board:
-        for j in i:
-            
-            if j.value == 1:
-                PR(ONE)
-            elif j.value == 2:
-                PR(TWO)
-            elif j.value == 3:
-                PR(THREE)
-            elif j.value == 4:
-                PR(FOUR)
-            elif j.value == 5:
-                PR(FIVE)
-            elif j.value == 6:
-                PR(SIX)
-            elif j.value == 7:
-                PR(SEVEN)
-            elif j.value ==8:
-                PR(EIGHT)
-            elif j.value ==9:
-                PR(NINE)
+    input_board(board)
 
-            WASD('D',0.002)
-        for i in range(9):
-            WASD("U",0.002)
-
-        WASD("R",0.002) 
 
 #should proabbly fix the indexing being backordss but would have to fix it all then :(
+disp_board = [[0 for col in range(9)] for row in range(9)]
 for i in range(9):
     for j in range(9):
         disp_board[i][j] = board[j][i].value
 
 print(*disp_board, sep='\n')
+#print(len(row_box_group))
 
 
-for i in range(3):
-    for j in range(3):
-        #print(board[j][i+3].possibilities)
-        #print(board[j][i+3].box_mates)
-        pass
-
-
-
-for i in range(9):
-    print(all_box[2].parts[i].value)

@@ -41,60 +41,6 @@ class Cell():
 		if len(self.possibilities) == 1:
 			self.value =  self.possibilities[0]
 			self.possibilities = np.array([])
-			'''
-		if self.x == 1 and self.y == 5:
-			for i in range(9):
-				print(self.box_mates[i].value, end='')
-			print(' ')
-'''
-
-	def check_sys(self, mates, needed):
-		
-
-		for need in needed:
-			can = []
-			for obj in mates:
-				for pos in obj.possibilities:
-					if pos == need:
-						can.append([obj,need])
-			if len(can) == 1:
-				can[0][0].value = can[0][1]
-				can[0][0].possibilities = []
-				return True
-				#print(can[0][0].value, can[0][1])
-
-		return False
-
-
-
-
-'''
-
-		candidates = []
-		for obj in self.box_mates:
-			for pos in obj.possibilities:
-				for need in self.needed_b:
-					candidates = []
-					if pos == need:
-						candidates.append([obj,need])
-							#print('appended',obj.possibilities,need )
-				if len(candidates) == 1:
-					candidates[0][0].value = candidates[0][1]
-					print(candidates[0][0].value, 'and' , candidates[0][1])
-					break
-
-'''
-
-'''
-class Row():
-	def __init__(self, Tiles):
-		self.needed = np.array([1,2,3,4,5,6,7,8,9])
-		self.Tiles = Tiles
-
-	def trim_row(self):
-		for i in Tiles:
-			self.needed = np.delete(self.needed ,np.where(self.needed == i.value))
-'''
 
 
 class BHV():
@@ -117,7 +63,26 @@ class BHV():
 				can[0][0].value = can[0][1]
 				can[0][0].possibilities = []
 
-	def pairs(self,box):
-		if len(needs)==2:
-			pass
-		
+
+	def pairs(self,row,box):
+		#print(row.needs,box.needs,box.parts[0].box)
+		if len(row.needs) == 2 and len(box.needs) == 3:
+			row_empty = []
+			box_empty = []
+			for i in row.parts:
+				if i.value == 0:
+					row_empty.append(i)
+
+			for i in box.parts:
+				if i.value == 0:
+					box_empty.append(i)
+
+			if row_empty[0].box == row_empty[1].box:
+				# all condtions good
+				# remove the row cells from the box empty
+				box_empty = np.delete(box_empty, np.where(box_empty == row_empty)[0])
+				print(box_empty)
+
+	def show(self):
+		for i in self.parts:
+			print(i.value)
