@@ -36,6 +36,7 @@ def set_up_board(board, new,value):
 			box = 8
 
 		obj = Cell(value , int(x[i]) , int(y[i]), box)
-		board[int(x[i])][int(y[i])] = obj 
 		obj.possibilities = array([])
+		board[int(x[i])][int(y[i])] = obj 
+		
 	return board

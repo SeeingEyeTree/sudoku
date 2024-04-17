@@ -10,8 +10,8 @@ from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Cell
 #website used on a chrome browser with book mark bar on https://sudoku.com
-
-debug = False # I know there is a module just don't feel like learing it right now 
+time.sleep(3)
+PYTHONBREAKPOINT ='' # I know there is a module just don't feel like learing it right now 
 
 # read in all refrance images
 one_w=imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
@@ -34,56 +34,48 @@ board_img = grab_screen(abs2rel(383,380)+abs2rel(1132,1129))
 board_img_gray = cvtColor(board_img,COLOR_RGB2GRAY)
 
 
-if debug:
-	while True:
-		cv2.imshow('window',board_img)
-		if cv2.waitKey(25) & 0xFF == ord('q'):
-	            cv2.destroyAllWindows()
-	            break
-
-#read values into array from img
 
 thres = 0.81
 
 board = [[Cell(0,0,0,0) for col in range(9)] for row in range(9)]
 
 for i in range(9):
-	for j in range(9): 
-		obj = board[i][j]
-		obj.x = i
-		obj.y = j
+    for j in range(9): 
+        obj = board[i][j]
+        obj.x = i
+        obj.y = j
 
 
-		if i<=2 and j<=2:
-			box = 0
-		elif 3<=i<=5 and j<=2:
-			box = 1
-		elif 6<=i and j<=2:
-			box = 2
+        if i<=2 and j<=2:
+            box = 0
+        elif 3<=i<=5 and j<=2:
+            box = 1
+        elif 6<=i and j<=2:
+            box = 2
 
-		elif i<=2 and 3<=j<=5:
-			box = 3
-		elif 3<=i<=5 and 3<=j<=5:
-			box = 4
-		elif i>=6 and 3<=j<=5:
-			box = 5
+        elif i<=2 and 3<=j<=5:
+            box = 3
+        elif 3<=i<=5 and 3<=j<=5:
+            box = 4
+        elif i>=6 and 3<=j<=5:
+            box = 5
 
-		elif i<=2 and j>=6:
-			box = 6
-		elif 3<=i<=5 and j>=6:
-			box = 7
-		elif i>=6 and j>=6:
-			box = 8
+        elif i<=2 and j>=6:
+            box = 6
+        elif 3<=i<=5 and j>=6:
+            box = 7
+        elif i>=6 and j>=6:
+            box = 8
 
-		obj.box = box
+        obj.box = box
 
 if False:
-	while True:
-		match_templat(board_img_gray,one_w,0.9,True)
-		if cv2.waitKey(25) & 0xFF == ord('q'):
-	            cv2.destroyAllWindows()
-	            break
-
+        while True:
+                match_templat(board_img_gray,one_w,0.9,True)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                        cv2.destroyAllWindows()
+                        break
+disp_board = [[0 for col in range(9)] for row in range(9)]
 board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
 board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
 board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
@@ -94,36 +86,49 @@ board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
 board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
 board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
 
-time.sleep(1)
+step=20
+for x in range(50):
+    for i in board:
+        for obj in i:
+            if obj.value == 0:
+                same_box = []
+                same_h_line = []
+                same_v_line = []
 
-for x in range(20):
-	for i in board:
-		for obj in i:
-			if obj.value == 0:
-				same_box = []
-				same_h_line = []
-				same_v_line = []
+                for comp_i in board:
+                    for comp_obj in comp_i:
+                        # might be able to put everything under the same umbrel but nice to seprate out might be useful later
+                        # will catch itself but since value is 0 does not matter
+                        if obj.box == comp_obj.box:
+                            same_box.append(comp_obj)
 
-				for comp_i in board:
-					for comp_obj in comp_i:
-						# might be able to put everything under the same umbrel but nice to seprate out might be useful later
-						# will catch itself but since value is 0 does not matter
-						if obj.box == comp_obj.box:
-							same_box.append(comp_obj)
+                        if obj.y == comp_obj.y:
+                            same_h_line.append(comp_obj)
 
-						if obj.y == comp_obj.y:
-							same_h_line.append(comp_obj)
-
-						if obj.x == comp_obj.x:
-							same_v_line.append(comp_obj)
+                        if obj.x == comp_obj.x:
+                            same_v_line.append(comp_obj)
 
 
-				obj.trim(same_box , same_h_line, same_v_line)
-				if x>10:
-					obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
-					obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
-					obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
+                obj.trim(same_box , same_h_line, same_v_line)
+                #print(board[8][5].value)
+                if x>10:
+                    obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
+                    obj.trim(same_box , same_h_line, same_v_line)
 
+                    if step>38:
+                        for i in range(9):
+                            for j in range(9):
+                                disp_board[i][j] = board[j][i].value
+                        print(*disp_board, sep='\n')
+                        #print(board[2][8].possibilities, board[6][7].value)
+                        for i in board[3][8].box_mates:
+                                print(i.value, end='')
+                        print(board[3][8].possibilities)
+                        breakpoint()
+                    step+=1 
+                    #obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
+                    #obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
+                    pass
 
 
 disp_board = [[0 for col in range(9)] for row in range(9)]
@@ -131,43 +136,54 @@ disp_board = [[0 for col in range(9)] for row in range(9)]
 
 
 
-if True:
-	for i in board:
-		for j in i:
-			
-			if j.value == 1:
-				PR(ONE)
-			elif j.value == 2:
-				PR(TWO)
-			elif j.value == 3:
-				PR(THREE)
-			elif j.value == 4:
-				PR(FOUR)
-			elif j.value == 5:
-				PR(FIVE)
-			elif j.value == 6:
-				PR(SIX)
-			elif j.value == 7:
-				PR(SEVEN)
-			elif j.value ==8:
-				PR(EIGHT)
-			elif j.value ==9:
-				PR(NINE)
+if False:
+    for i in board:
+        for j in i:
+            
+            if j.value == 1:
+                PR(ONE)
+            elif j.value == 2:
+                PR(TWO)
+            elif j.value == 3:
+                PR(THREE)
+            elif j.value == 4:
+                PR(FOUR)
+            elif j.value == 5:
+                PR(FIVE)
+            elif j.value == 6:
+                PR(SIX)
+            elif j.value == 7:
+                PR(SEVEN)
+            elif j.value ==8:
+                PR(EIGHT)
+            elif j.value ==9:
+                PR(NINE)
 
-			WASD('D',0.001)
-		for i in range(9):
-			WASD("U",0.001)
+            WASD('D',0.001)
+        for i in range(9):
+            WASD("U",0.001)
 
-		WASD("R",0.001)	
+        WASD("R",0.001) 
 
 #should proabbly fix the indexing being backordss but would have to fix it all then :(
 for i in range(9):
-	for j in range(9):
-		disp_board[i][j] = board[j][i].value
+    for j in range(9):
+        disp_board[i][j] = board[j][i].value
 
 print(*disp_board, sep='\n')
 
-print('box',board[0][0].needed_b)
-print('h line', board[0][0].needed_h)
-print('v line', board[0][0].needed_v)
 
+for i in range(3):
+    for j in range(3):
+        #print(board[j][i+3].possibilities)
+        #print(board[j][i+3].box_mates)
+        pass
+
+#print(board[1][5].box_mates)
+board[1][5].check_sys(board[1][5].box_mates, board[1][5].needed_b)
+
+for i in range(9):
+    for j in range(9):
+        disp_board[i][j] = board[j][i].value
+
+print(*disp_board, sep='\n')
