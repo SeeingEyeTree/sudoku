@@ -3,6 +3,7 @@ from classes import Cell
 def set_up_board(board, new,value):
 	y = round(new[0]/84)
 	x = round(new[1]/84)
+	prelim =[]
 	#scufed solution just run it a bunch of times can add acutall logic later
 	# deleats all duplicats found with matching
 	for i in range(100):
@@ -38,5 +39,5 @@ def set_up_board(board, new,value):
 		obj = Cell(value , int(x[i]) , int(y[i]), box)
 		obj.possibilities = array([])
 		board[int(x[i])][int(y[i])] = obj 
-		
+
 	return board

@@ -2,16 +2,16 @@ import cv2
 from cv2 import cvtColor,imread,COLOR_RGB2GRAY, TM_CCOEFF_NORMED
 import time
 import numpy as np
-import pyautogui
+import pyautogui as pag
 from grab_screen import grab_screen
 from rel_cords import abs2rel
 from keys import WASD, PR, ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE
 from match_templat import match_templat
 from set_up_board import set_up_board
-from classes import Cell
+from classes import Cell, BHV
 #website used on a chrome browser with book mark bar on https://sudoku.com
 time.sleep(3)
-PYTHONBREAKPOINT ='' # I know there is a module just don't feel like learing it right now 
+PYTHONBREAKPOINT =0# I know there is a module just don't feel like learing it right now 
 
 # read in all refrance images
 one_w=imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
@@ -71,7 +71,7 @@ for i in range(9):
 
 if False:
         while True:
-                match_templat(board_img_gray,one_w,0.9,True)
+                match_templat(board_img_gray,nine_w,0.85,True)
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                         cv2.destroyAllWindows()
                         break
@@ -84,59 +84,72 @@ board = set_up_board(board , match_templat(board_img_gray,five_w,0.9) , 5)
 board = set_up_board(board , match_templat(board_img_gray,six_w,0.9,) , 6)
 board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
 board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
-board = set_up_board(board , match_templat(board_img_gray,nine_w,0.9) , 9)
+board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
 
+
+# Set up the same box and line since it cannot be done when intilised
+all_box = []
+all_col = []
+all_row = []
+for i in board:
+    for obj in i:
+        same_box = []
+        same_h_line = []
+        same_v_line = []
+        for comp_i in board:
+            for comp_obj in comp_i:
+                # might be able to put everything under the same umbrel but nice to seprate out might be useful later
+                # will catch itself but since value is 0 does not matter
+                if obj.box == comp_obj.box:
+                    same_box.append(comp_obj)
+
+                if obj.y == comp_obj.y:
+                    same_h_line.append(comp_obj)
+
+                if obj.x == comp_obj.x:
+                    same_v_line.append(comp_obj)
+
+
+        
+        obj.box_mates = same_box
+        obj.h_line_mates = same_h_line
+        obj.v_line_mates = same_v_line
+
+    all_box.append(BHV(same_box))
+    all_col.append(BHV(same_v_line))
+    all_row.append(BHV(same_h_line))
+
+
+
+found=False
 step=20
-for x in range(50):
+def any_good(list, condtion1, condtion2):
+    pass
+
+def trim_all(board):
     for i in board:
         for obj in i:
-            if obj.value == 0:
-                same_box = []
-                same_h_line = []
-                same_v_line = []
-
-                for comp_i in board:
-                    for comp_obj in comp_i:
-                        # might be able to put everything under the same umbrel but nice to seprate out might be useful later
-                        # will catch itself but since value is 0 does not matter
-                        if obj.box == comp_obj.box:
-                            same_box.append(comp_obj)
-
-                        if obj.y == comp_obj.y:
-                            same_h_line.append(comp_obj)
-
-                        if obj.x == comp_obj.x:
-                            same_v_line.append(comp_obj)
+            obj.trim(obj.box_mates , obj.h_line_mates, obj.v_line_mates)
 
 
-                obj.trim(same_box , same_h_line, same_v_line)
-                #print(board[8][5].value)
-                if x>10:
-                    obj.h_line_mates = obj.check_sys(obj.h_line_mates, obj.needed_h)
-                    obj.trim(same_box , same_h_line, same_v_line)
 
-                    if step>38:
-                        for i in range(9):
-                            for j in range(9):
-                                disp_board[i][j] = board[j][i].value
-                        print(*disp_board, sep='\n')
-                        #print(board[2][8].possibilities, board[6][7].value)
-                        for i in board[3][8].box_mates:
-                                print(i.value, end='')
-                        print(board[3][8].possibilities)
-                        breakpoint()
-                    step+=1 
-                    #obj.v_line_mates = obj.check_sys(obj.v_line_mates, obj.needed_v)
-                    #obj.box_mates = obj.check_sys(obj.box_mates, obj.needed_b)
-                    pass
+for x in range(100):
+    trim_all(board)
+    for i in all_row:
+        i.last_one()
+    for i in all_box:
+        i.last_one()
+    for i in all_col:
+        i.last_one()
+
 
 
 disp_board = [[0 for col in range(9)] for row in range(9)]
+pag.click(420,420)
 
 
 
-
-if False:
+if True:
     for i in board:
         for j in i:
             
@@ -159,11 +172,11 @@ if False:
             elif j.value ==9:
                 PR(NINE)
 
-            WASD('D',0.001)
+            WASD('D',0.002)
         for i in range(9):
-            WASD("U",0.001)
+            WASD("U",0.002)
 
-        WASD("R",0.001) 
+        WASD("R",0.002) 
 
 #should proabbly fix the indexing being backordss but would have to fix it all then :(
 for i in range(9):
@@ -179,11 +192,7 @@ for i in range(3):
         #print(board[j][i+3].box_mates)
         pass
 
-#print(board[1][5].box_mates)
-board[1][5].check_sys(board[1][5].box_mates, board[1][5].needed_b)
+
 
 for i in range(9):
-    for j in range(9):
-        disp_board[i][j] = board[j][i].value
-
-print(*disp_board, sep='\n')
+    print(all_box[2].parts[i].value)
