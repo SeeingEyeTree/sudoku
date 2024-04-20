@@ -1,6 +1,7 @@
 import numpy as np
 
 
+
 class Cell():
 
 	def __init__(self, value,x,y,box):
@@ -52,7 +53,7 @@ class BHV():
 	def last_one(self):
 		for i in self.parts:
 			self.needs = np.delete(self.needs, np.where(self.needs == i.value)[0])
-
+		# don't think it makes seens to make a function to find canadites since what it returns would have to be a list you loop through anyway
 		for need in self.needs:
 			can = []
 			for obj in self.parts:
@@ -64,24 +65,79 @@ class BHV():
 				can[0][0].possibilities = []
 
 
-	def pairs(self,row,box):
-		#print(row.needs,box.needs,box.parts[0].box)
-		if len(row.needs) == 2 and len(box.needs) == 3:
-			row_empty = []
+	def pairs(self,col,box):
+		if len(col.needs) == 2 and len(box.needs) == 3:
+			col_empty = []
 			box_empty = []
-			for i in row.parts:
+			for i in col.parts:
 				if i.value == 0:
-					row_empty.append(i)
+					col_empty.append(i)
+
+			for i in box.parts:
+				if i.value == 0:
+					box_empty.append(i)
+			try:
+
+				if col_empty[0].box == col_empty[1].box:
+					# all condtions good
+					# remove the col cells from the box empty
+					box_empty = np.delete(box_empty, np.where(box_empty == col_empty)[0])
+			except:
+				pass
+
+	# this doesn't really make sense to be a methode but whatever
+	def genral_pair(self,line,box,l_type):
+			#could do True false for line type but clearer this way
+			l_empty = []
+			box_empty = []
+
+			for i in line.parts:
+				if i.value == 0:
+					l_empty.append(i)
 
 			for i in box.parts:
 				if i.value == 0:
 					box_empty.append(i)
 
-			if row_empty[0].box == row_empty[1].box:
-				# all condtions good
-				# remove the row cells from the box empty
-				box_empty = np.delete(box_empty, np.where(box_empty == row_empty)[0])
-				print(box_empty)
+			for need in box.needs:
+				can = []
+				for i in box_empty:
+					for pos in i.possibilities:
+						if pos == need:
+							can.append(i)
+							break
+							
+				condtions_meet = []
+				if l_type == 'row':
+					for i in can:
+						if i.y == can[0].y:
+							condtions_meet.append(True)
+						else:
+							condtions_meet.append(False)
+				elif l_type == 'col':
+					for i in can:
+						if i.x == can[0].x:
+							condtions_meet.append(True)
+						else:
+							condtions_meet.append(False)
+
+				if all(condtions_meet):
+					# remove possibilities of need from all cells in row that are not in box
+					# get empty
+					cells_not_in_box = []
+					for i in line.parts:
+						if i.box != box.parts[0].box:
+							cells_not_in_box.append(i)
+
+					for i in cells_not_in_box:
+						i.possibilities = np.delete(i.possibilities, np.where(i.possibilities == need)[0])
+					return True
+				return False
+					# delet posiblity
+
+
+
+
 
 	def show(self):
 		for i in self.parts:

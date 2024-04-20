@@ -11,7 +11,7 @@ def farm(n):
         click(1357,1011)
         sleep(0.1)
         click(1357,910)
-        sleep(5)
+        sleep(10)
 
 
 farm(10)

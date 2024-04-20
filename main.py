@@ -52,7 +52,6 @@ def main():
             obj.x = i
             obj.y = j
 
-
             if i<=2 and j<=2:
                 box = 0
             elif 3<=i<=5 and j<=2:
@@ -85,6 +84,7 @@ def main():
 
 
     disp_board = [[0 for col in range(9)] for row in range(9)]
+    #cant use for loop since the thresholds have to be diffrent for some numbers and nice to be able to change them indvully
     board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
     board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
     board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
@@ -94,7 +94,7 @@ def main():
     board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
     board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
     board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
-
+    disp_board = [[0 for col in range(9)] for row in range(9)]
 
     # Set up the same box and line since it cannot be done when intilised
     all_box = []
@@ -117,8 +117,6 @@ def main():
 
                     if obj.x == comp_obj.x:
                         same_v_line.append(comp_obj)
-
-
             
             obj.box_mates = same_box
             obj.h_line_mates = same_h_line
@@ -128,18 +126,30 @@ def main():
             all_col.append(BHV(same_v_line))
             all_row.append(BHV(same_h_line))
     # group boxes and rows toghet to better find pairs that can elemi pos
-    row_box_group = []
+    col_box_group = []
 
     for r in all_col:
         for pr in r.parts:
             for b in all_box:
                 for pb in b.parts:
                     if pr.x == pb.x:
+                        col_box_group.append([r,b])
+
+    col_box_group = [list(t) for t in set(tuple(element) for element in col_box_group)]
+
+
+    row_box_group = []
+
+    for r in all_col:
+        for pr in r.parts:
+            for b in all_box:
+                for pb in b.parts:
+                    if pr.y == pb.y:
                         row_box_group.append([r,b])
 
     row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
-
-    for x in range(200):
+    step=0
+    for x in range(30):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -147,22 +157,58 @@ def main():
             i.last_one()
         for i in all_col:
             i.last_one()
-        if x>10:
-            for i in row_box_group:
+        if x > 10:
+            for i in col_box_group:
                 i[0].pairs(i[0],i[1])
+        if x > 15:
+            for i in row_box_group:
+                if i[0].genral_pair(i[0],i[1],'row'):
+                    break
+                '''
+                for i in range(9):
+                    for j in range(9):
+                        disp_board[i][j] = board[j][i].value
+                print(*disp_board, sep='\n')
+                print(board[2][8].possibilities,'(2,8)')
+                print(board[3][8].possibilities,'(3,8)')
+                print(board[4][8].possibilities,'(4,8)')
+                print(board[5][8].possibilities,'(5,8)')
+                print(board[7][8].possibilities,'(7,8)')
+                step+=1
+                print(step)
+                breakpoint()
+                '''
+                pass
 
-    if True:
+                
+        total=0
+        for i in board:
+            for j in i:
+                total +=j.value
+        if total == 405:
+            break
+
+    if False:
         input_board(board)
 
 
     #should proabbly fix the indexing being backordss but would have to fix it all then :(
-    disp_board = [[0 for col in range(9)] for row in range(9)]
+    
     for i in range(9):
         for j in range(9):
             disp_board[i][j] = board[j][i].value
-
+    for i in range(9):
+        for j in range(9):
+            disp_board[i][j] = board[j][i].value
     print(*disp_board, sep='\n')
+    print(board[2][8].possibilities,'(2,8)')
+    print(board[3][8].possibilities,'(3,8)')
+    print(board[4][8].possibilities,'(4,8)')
+    print(board[5][8].possibilities,'(5,8)')
+    print(board[7][8].possibilities,'(7,8)')
+
 
 
 if __name__ == '__main__':
     main()
+
