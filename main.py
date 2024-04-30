@@ -8,6 +8,7 @@ from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Cell, BHV
 from input_board import input_board
+
 #website used on a chrome browser with book mark bar on https://sudoku.com
 PYTHONBREAKPOINT = 0 # I know there is a module just don't feel like learing it right now 
 
@@ -40,6 +41,52 @@ def trim_all(board):
     for i in board:
         for obj in i:
             obj.trim(obj.box_mates , obj.h_line_mates, obj.v_line_mates)
+
+
+def pairs(col,box):
+    if len(col.needs) == 2 and len(box.needs) == 3:
+        col_empty = []
+        box_empty = []
+        for i in col.parts:
+            if i.value == 0:
+                col_empty.append(i)
+
+        for i in box.parts:
+            if i.value == 0:
+                box_empty.append(i)
+        if len(col_empty) == 2:
+            if col_empty[0].box == col_empty[1].box:
+                # all condtions good
+                # remove the col cells from the box empty
+                box_empty = np.delete(box_empty, np.where(box_empty == col_empty))
+
+def genral_pair(line,box,l_type):                
+    for need in line.needs:
+        can = []
+        for part in line.parts:
+            for pos in part.possibilities:
+                if pos == need:
+                    can.append(part)
+        if len(can)>1:
+            all_con = []
+            for i in can:
+                if i.box == can[0].box:
+                    all_con.append(True)
+                else:
+                    all_con.append(False)
+
+            if all(all_con):
+                remove_from = []
+
+                if l_type == 'col':
+                    for i in box.parts:
+                        if i.x != can[0].x:
+                            remove_from.append(i)
+
+                for i in remove_from:
+                    i.possibilities = np.delete(i.possibilities, np.where(i.possibilities == need))
+                
+
 
 
 def main():
@@ -149,7 +196,7 @@ def main():
 
     row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
     step=0
-    for x in range(30):
+    for x in range(60):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -158,12 +205,14 @@ def main():
         for i in all_col:
             i.last_one()
         if x > 10:
+            # thses are really functions not methods but what ever
             for i in col_box_group:
-                i[0].pairs(i[0],i[1])
-        if x > 15:
-            for i in row_box_group:
-                if i[0].genral_pair(i[0],i[1],'row'):
-                    break
+                pairs(i[0],i[1])
+        if x > 20:
+            for i in col_box_group:
+                genral_pair(i[0],i[1],'col')
+            
+                
                 '''
                 for i in range(9):
                     for j in range(9):
@@ -184,7 +233,7 @@ def main():
         total=0
         for i in board:
             for j in i:
-                total +=j.value
+                total += j.value
         if total == 405:
             break
 
@@ -201,14 +250,18 @@ def main():
         for j in range(9):
             disp_board[i][j] = board[j][i].value
     print(*disp_board, sep='\n')
+    x=6
+    y=6
+    print(board[x][y].possibilities,f'({x},{y})')
+    '''
     print(board[2][8].possibilities,'(2,8)')
     print(board[3][8].possibilities,'(3,8)')
     print(board[4][8].possibilities,'(4,8)')
     print(board[5][8].possibilities,'(5,8)')
     print(board[7][8].possibilities,'(7,8)')
+    '''
 
 
 
 if __name__ == '__main__':
     main()
-
