@@ -66,6 +66,16 @@ class BHV():
 
 
 
+
+
+
+
+
+
+
+
+
+
 	def show(self):
 		for i in self.parts:
 			print(i.value)

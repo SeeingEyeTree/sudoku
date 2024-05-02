@@ -8,9 +8,11 @@ def input_board(board):
         for j in i:
             
             if j.value == 1:
-                PR(ONE)
+                #PR(ONE)
+                pass
             elif j.value == 2:
                 PR(TWO)
+                pass
             elif j.value == 3:
                 PR(THREE)
             elif j.value == 4:
@@ -19,12 +21,14 @@ def input_board(board):
                 PR(FIVE)
             elif j.value == 6:
                 PR(SIX)
+                pass
             elif j.value == 7:
                 PR(SEVEN)
             elif j.value == 8:
                 PR(EIGHT)
             elif j.value == 9:
                 PR(NINE)
+                pass
 
             WASD('D',0.002)
         for i in range(9):

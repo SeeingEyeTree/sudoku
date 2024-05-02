@@ -8,7 +8,7 @@ from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Cell, BHV
 from input_board import input_board
-
+import copy
 #website used on a chrome browser with book mark bar on https://sudoku.com
 PYTHONBREAKPOINT = 0 # I know there is a module just don't feel like learing it right now 
 
@@ -43,30 +43,14 @@ def trim_all(board):
             obj.trim(obj.box_mates , obj.h_line_mates, obj.v_line_mates)
 
 
-def pairs(col,box):
-    if len(col.needs) == 2 and len(box.needs) == 3:
-        col_empty = []
-        box_empty = []
-        for i in col.parts:
-            if i.value == 0:
-                col_empty.append(i)
-
-        for i in box.parts:
-            if i.value == 0:
-                box_empty.append(i)
-        if len(col_empty) == 2:
-            if col_empty[0].box == col_empty[1].box:
-                # all condtions good
-                # remove the col cells from the box empty
-                box_empty = np.delete(box_empty, np.where(box_empty == col_empty))
-
-def genral_pair(line,box,l_type):                
+def genral_pair(line,boxs,l_type):                
     for need in line.needs:
         can = []
         for part in line.parts:
             for pos in part.possibilities:
                 if pos == need:
                     can.append(part)
+
         if len(can)>1:
             all_con = []
             for i in can:
@@ -76,17 +60,47 @@ def genral_pair(line,box,l_type):
                     all_con.append(False)
 
             if all(all_con):
+                #print('enter')
                 remove_from = []
 
                 if l_type == 'col':
-                    for i in box.parts:
-                        if i.x != can[0].x:
-                            remove_from.append(i)
+                    y = can[0].y  
+                    if 0 <= y and y < 3:
+                        remove_box = boxs[0]
+                    elif 3 <= y and y < 6:
+                        remove_box = boxs[1]
+                    else:
+                        remove_box = boxs[2]
+                elif l_type == 'row':
+                    x = can[0].x
+                    if 0 <= x and x <= 2:
+                        remove_box = boxs[0]
+                    elif 3 <= x and x <= 5:
+                        remove_box = boxs[1]
+                    else:
+                        remove_box = boxs[2]
 
+                    for i in remove_box.parts:
+                        if l_type == 'col':
+                            if i.x != line.parts[0].x and i.value == 0:
+                                remove_from.append(i)
+                        elif l_type == 'row':
+                            if i.y != line.parts[0].y and i.value == 0:
+                                remove_from.append(i)
+
+            
                 for i in remove_from:
+                    #print('line x', line.parts[0].x,'need', need)
+                    #print('removeing',need,'from', f'({i.x},{i.y})')
                     i.possibilities = np.delete(i.possibilities, np.where(i.possibilities == need))
-                
 
+
+def show_board(board):
+    disp_board = [[0 for col in range(9)] for row in range(9)]
+    for i in range(9):
+        for j in range(9):
+            disp_board[i][j] = board[j][i].value
+    print(*disp_board, sep='\n')
 
 
 def main():
@@ -98,6 +112,7 @@ def main():
             obj = board[i][j]
             obj.x = i
             obj.y = j
+
 
             if i<=2 and j<=2:
                 box = 0
@@ -122,16 +137,15 @@ def main():
 
             obj.box = box
 
-    if False:
-        while True:
-            match_templat(board_img_gray,nine_w,0.85,True)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
-                break
+
+    while False:
+        match_templat(board_img_gray,nine_w,0.85,True)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
 
 
-    disp_board = [[0 for col in range(9)] for row in range(9)]
-    #cant use for loop since the thresholds have to be diffrent for some numbers and nice to be able to change them indvully
+
     board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
     board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
     board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
@@ -141,13 +155,15 @@ def main():
     board = set_up_board(board , match_templat(board_img_gray,seven_w,0.9) , 7)
     board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
     board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
-    disp_board = [[0 for col in range(9)] for row in range(9)]
+
 
     # Set up the same box and line since it cannot be done when intilised
     all_box = []
     all_col = []
     all_row = []
+
     for i in board:
+        counter = 0
         for obj in i:
             same_box = []
             same_h_line = []
@@ -158,44 +174,63 @@ def main():
                     # will catch itself but since value is 0 does not matter
                     if obj.box == comp_obj.box:
                         same_box.append(comp_obj)
-
+                        
                     if obj.y == comp_obj.y:
                         same_h_line.append(comp_obj)
-
+                        
                     if obj.x == comp_obj.x:
                         same_v_line.append(comp_obj)
+                        
+
             
             obj.box_mates = same_box
             obj.h_line_mates = same_h_line
             obj.v_line_mates = same_v_line
-
-            all_box.append(BHV(same_box))
-            all_col.append(BHV(same_v_line))
+            
+            if counter % 3 == 0:
+                all_box.append(BHV(same_box))
+                all_col.append(BHV(same_v_line))
             all_row.append(BHV(same_h_line))
+            counter += 1
+            
     # group boxes and rows toghet to better find pairs that can elemi pos
+    good_box = [] 
+    good_col = []
+    good_row = all_row[0:9]
+    for i in [0,9,18,1,10,19,2,11,20]:
+        good_box.append(all_box[i])
+
+    for i in range(0,27,3):
+        good_col.append(all_col[i])
+
     col_box_group = []
-
-    for r in all_col:
-        for pr in r.parts:
-            for b in all_box:
-                for pb in b.parts:
-                    if pr.x == pb.x:
-                        col_box_group.append([r,b])
-
-    col_box_group = [list(t) for t in set(tuple(element) for element in col_box_group)]
-
+    box_set_1 = [good_box[0],good_box[3],good_box[6]]
+    box_set_2 = [good_box[1],good_box[4],good_box[7]]
+    box_set_3 = [good_box[3],good_box[5],good_box[8]]
 
     row_box_group = []
+    offset = 0
+    loop = 1
+    for row in good_row:
+        box_set = []
+        for i in range(3):
+            box_set.append(good_box[i+offset])
+        if loop % 3 == 0:
+            offset += 3
+        row_box_group.append([row,box_set])
+        loop += 1
 
-    for r in all_col:
-        for pr in r.parts:
-            for b in all_box:
-                for pb in b.parts:
-                    if pr.y == pb.y:
-                        row_box_group.append([r,b])
+    for i in range(0,3):
+        col_box_group.append([good_col[i],box_set_1])
 
-    row_box_group = [list(t) for t in set(tuple(element) for element in row_box_group)]
-    step=0
+    for i in range(3,6):
+        col_box_group.append([good_col[i],box_set_2])
+
+    for i in range(6,9):
+        col_box_group.append([good_col[i],box_set_3])
+
+
+
     for x in range(60):
         trim_all(board)
         for i in all_row:
@@ -204,64 +239,40 @@ def main():
             i.last_one()
         for i in all_col:
             i.last_one()
+        
+        before_board = [[0 for col in range(9)] for row in range(9)]
+        for i in range(9):
+            for j in range(9):
+                before_board[i][j] = copy.deepcopy(board[i][j])
+                pass
+        
         if x > 10:
-            # thses are really functions not methods but what ever
-            for i in col_box_group:
-                pairs(i[0],i[1])
-        if x > 20:
             for i in col_box_group:
                 genral_pair(i[0],i[1],'col')
-            
-                
-                '''
-                for i in range(9):
-                    for j in range(9):
-                        disp_board[i][j] = board[j][i].value
-                print(*disp_board, sep='\n')
-                print(board[2][8].possibilities,'(2,8)')
-                print(board[3][8].possibilities,'(3,8)')
-                print(board[4][8].possibilities,'(4,8)')
-                print(board[5][8].possibilities,'(5,8)')
-                print(board[7][8].possibilities,'(7,8)')
-                step+=1
-                print(step)
-                breakpoint()
-                '''
+            for i in row_box_group:
+                genral_pair(i[0],i[1],'row')
                 pass
-
-                
+        
+        for i in range(9):
+            for j in range(9):
+                if len(before_board[i][j].possibilities) != len(board[i][j].possibilities):
+                    #print('Before',before_board[i][j].possibilities, 'After',board[i][j].possibilities,f'({i},{j})') 
+                    pass  
         total=0
         for i in board:
             for j in i:
-                total += j.value
+                total +=j.value
         if total == 405:
             break
 
-    if False:
+    if True:
         input_board(board)
 
 
     #should proabbly fix the indexing being backordss but would have to fix it all then :(
-    
-    for i in range(9):
-        for j in range(9):
-            disp_board[i][j] = board[j][i].value
-    for i in range(9):
-        for j in range(9):
-            disp_board[i][j] = board[j][i].value
-    print(*disp_board, sep='\n')
-    x=6
-    y=6
-    print(board[x][y].possibilities,f'({x},{y})')
-    '''
-    print(board[2][8].possibilities,'(2,8)')
-    print(board[3][8].possibilities,'(3,8)')
-    print(board[4][8].possibilities,'(4,8)')
-    print(board[5][8].possibilities,'(5,8)')
-    print(board[7][8].possibilities,'(7,8)')
-    '''
-
-
+    show_board(board)
+    x = 6
+    y = 6
 
 if __name__ == '__main__':
     main()
