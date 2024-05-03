@@ -249,6 +249,8 @@ def main():
         if x > 10:
             for i in col_box_group:
                 genral_pair(i[0],i[1],'col')
+                pass
+        if x>10 and x % 5  == 0 :
             for i in row_box_group:
                 genral_pair(i[0],i[1],'row')
                 pass
@@ -263,13 +265,14 @@ def main():
             for j in i:
                 total +=j.value
         if total == 405:
+            print('Correct')
             break
 
     if True:
         input_board(board)
 
 
-    #should proabbly fix the indexing being backordss but would have to fix it all then :(
+   
     show_board(board)
     x = 6
     y = 6

@@ -8,7 +8,7 @@ def input_board(board):
         for j in i:
             
             if j.value == 1:
-                #PR(ONE)
+                PR(ONE)
                 pass
             elif j.value == 2:
                 PR(TWO)
