@@ -6,7 +6,7 @@ def input_board(board):
     sleep(0.1)
     for i in board:
         for j in i:
-            
+
             if j.value == 1:
                 PR(ONE)
                 pass
@@ -35,3 +35,42 @@ def input_board(board):
             WASD("U",0.002)
 
         WASD("R",0.002) 
+
+# not relative cords for this one
+def show_possibilities(board):
+    click(1480,420)
+    not_solved = []
+
+    for i in board:
+        for j in i:
+            if j.value == 0:
+                not_solved.append(j)
+
+    for i in not_solved:
+        click(420+i.x*84,420+i.y*84)
+        for j in i.possibilities:
+            print(j)
+            if j == 1:
+                PR(ONE)
+                pass
+            elif j == 2:
+                PR(TWO)
+                pass
+            elif j == 3:
+                PR(THREE)
+            elif j == 4:
+                PR(FOUR)
+            elif j == 5:
+                PR(FIVE)
+            elif j == 6:
+                PR(SIX)
+                pass
+            elif j == 7:
+                PR(SEVEN)
+            elif j == 8:
+                PR(EIGHT)
+            elif j == 9:
+                PR(NINE)
+                pass
+            sleep(0.005)
+    click(1480,420)

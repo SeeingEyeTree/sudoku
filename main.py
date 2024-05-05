@@ -7,7 +7,7 @@ from rel_cords import abs2rel
 from match_templat import match_templat
 from set_up_board import set_up_board
 from classes import Cell, BHV
-from input_board import input_board
+from input_board import input_board,show_possibilities
 import copy
 #website used on a chrome browser with book mark bar on https://sudoku.com
 PYTHONBREAKPOINT = 0 # I know there is a module just don't feel like learing it right now 
@@ -231,7 +231,7 @@ def main():
 
 
 
-    for x in range(60):
+    for x in range(30):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -271,6 +271,8 @@ def main():
     if True:
         input_board(board)
 
+    if True:
+       show_possibilities(board)
 
    
     show_board(board)
