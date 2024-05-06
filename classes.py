@@ -43,6 +43,9 @@ class Cell():
 			self.value =  self.possibilities[0]
 			self.possibilities = np.array([])
 
+	def remove_pos(self,remove):
+		self.possibilities = np.delete(self.possibilities , np.where(self.possibilities == remove)[0])
+
 
 class BHV():
 	def __init__(self,parts):

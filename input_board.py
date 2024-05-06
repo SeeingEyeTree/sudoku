@@ -48,29 +48,29 @@ def show_possibilities(board):
 
     for i in not_solved:
         click(420+i.x*84,420+i.y*84)
-        for j in i.possibilities:
-            print(j)
-            if j == 1:
-                PR(ONE)
-                pass
-            elif j == 2:
-                PR(TWO)
-                pass
-            elif j == 3:
-                PR(THREE)
-            elif j == 4:
-                PR(FOUR)
-            elif j == 5:
-                PR(FIVE)
-            elif j == 6:
-                PR(SIX)
-                pass
-            elif j == 7:
-                PR(SEVEN)
-            elif j == 8:
-                PR(EIGHT)
-            elif j == 9:
-                PR(NINE)
-                pass
-            sleep(0.005)
+        if True: #len(i.possibilities) <= 3:
+            for j in i.possibilities:
+                if j == 1:
+                    PR(ONE)
+                    pass
+                elif j == 2:
+                    PR(TWO)
+                    pass
+                elif j == 3:
+                    PR(THREE)
+                elif j == 4:
+                    PR(FOUR)
+                elif j == 5:
+                    PR(FIVE)
+                elif j == 6:
+                    PR(SIX)
+                    pass
+                elif j == 7:
+                    PR(SEVEN)
+                elif j == 8:
+                    PR(EIGHT)
+                elif j == 9:
+                    PR(NINE)
+                    pass
+                sleep(0.005)
     click(1480,420)
