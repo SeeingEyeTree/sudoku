@@ -102,38 +102,6 @@ def trip_pair(boxs):
             for i in box.parts:
                 if len(i.possibilities) <= 3:
                     can.append(i)
-            '''
-            one = []
-            two = []
-            three = []
-            four = []
-            five = []
-            six = []
-            seven = []
-            eight = []
-            nine = []
-
-            for i in can:
-                for pos in i.possibilities:
-                    if pos == 1:
-                        one.append(pos)
-                    elif pos == 2:
-                        two.append(pos)
-                    elif pos == 3:
-                        three.append(pos)
-                    elif pos == 4:
-                        four.append(pos)
-                    elif pos == 5:
-                        five.append(pos)
-                    elif pos == 6:
-                        six.append(pos)
-                    elif pos == 7:
-                        seven.append(pos)
-                    elif pos == 8:
-                        eight.append(pos)
-                    elif pos == 9:
-                        nine.append(pos)
-                        '''
             # time for some really stupitiy
             '''
             for check_aginest in range(123,987):
@@ -141,63 +109,42 @@ def trip_pair(boxs):
                 # I swear I could use genrators or something to do this better with any() but I dont know how to do that currentlly
                 pair_up = []
             '''
-            pair_up = []
-            for i in can:
-                if len(i.possibilities) == 3:
-                    master = i.possibilities # know it is a term for severs figth me
-                    #print(master)
-                    break
-
-            for i in can:
-                simlarity = 0
-                for pos in i.possibilities:
-                    if pos == master[0]:
-                        simlarity += 1
-                    if pos ==  master[1]:
-                        simlarity += 1
-                    if pos ==  master[2]:
-                        simlarity += 1
-
-                    if (simlarity == 2 and len(i.possibilities) == 2) or (simlarity == 3 and len(i.possibilities == 3)):
-                        pair_up.append(i)
-
-            if len(pair_up) == 3:
-                print(master,'nice box',pair_up[0].box, pair_up[0].possibilities,pair_up[1].possibilities,pair_up[2].possibilities)
-                for remove in master:
-                    for part in box.parts:
-                        condtions = []
-                        for not_this in pair_up:
-                            if part != not_this:
-                                condtions.append(True)
-                            else:
-                                condtions.append(False)
-                        if all(condtions):
-                            part.possibilities = np.delete(part.possibilities , np.where(part.possibilities == remove)[0])
-                            print('removeing', remove, 'from',f'({part.x},{part.y})')
-
-                    pass
-
-
-                    # deal with always have a three first
-            '''
+            for master in range(123,987):
+                pair_up = []
+                '''
+                for i in can:
+                    if len(i.possibilities) == 3:
+                        master = i.possibilities # know it is a term for severs figth me
+                        #print(master)
+                        break
+                '''
+                for i in can:
+                    simlarity = 0
                     for pos in i.possibilities:
-                        # this could rightly go in a cures codeing complation and I am all for it
-                        if pos == int(str(check_aginest)[0]) and int(str(check_aginest)[0]) != int(str(check_aginest)[1]) and int(str(check_aginest)[0]) != int(str(check_aginest)[2]) and int(str(check_aginest)[2]) != int(str(check_aginest)[1]):
-                            first+=1
-                        if pos == int(str(check_aginest)[1]) and int(str(check_aginest)[0]) != int(str(check_aginest)[1]) and int(str(check_aginest)[0]) != int(str(check_aginest)[2]) and int(str(check_aginest)[2]) != int(str(check_aginest)[1]):
-                            second+=1
-                        if pos == int(str(check_aginest)[2]) and int(str(check_aginest)[0]) != int(str(check_aginest)[1]) and int(str(check_aginest)[0]) != int(str(check_aginest)[2]) and int(str(check_aginest)[2]) != int(str(check_aginest)[1]):
-                            third+=1
+                        if pos == int(str(master)[0]) and int(str(master)[0]) != int(str(master)[1]) and int(str(master)[0]) != int(str(master)[2]) and int(str(master)[1]) != int(str(master)[2]):
+                            simlarity += 1
+                        if pos ==  int(str(master)[1]) and int(str(master)[0]) != int(str(master)[1]) and int(str(master)[0]) != int(str(master)[2]) and int(str(master)[1]) != int(str(master)[2]):
+                            simlarity += 1
+                        if pos ==  int(str(master)[2]) and int(str(master)[0]) != int(str(master)[1]) and int(str(master)[0]) != int(str(master)[2]) and int(str(master)[1]) != int(str(master)[2]):
+                            simlarity += 1
 
-                        if pair_num >= 2:
+                        if (simlarity == 2 and len(i.possibilities) == 2) or (simlarity == 3 and len(i.possibilities == 3)):
                             pair_up.append(i)
 
                 if len(pair_up) == 3:
-                    print(pair_up[0].possibilities,pair_up[1].possibilities,pair_up[2].possibilities)
-                    true_pair = pair_up[0].possibilities+pair_up[1].possibilities+pair_up[2].possibilities
-                    print('ehhhhh','box', i.box, 'has pair',check_aginest)
-                    #print(true_pair)
-                    '''
+                    print(master,'nice box',pair_up[0].box, pair_up[0].possibilities,pair_up[1].possibilities,pair_up[2].possibilities)
+                    for remove in str(master):
+                        for part in box.parts:
+                            condtions = []
+                            for not_this in pair_up:
+                                if part != not_this:
+                                    condtions.append(True)
+                                else:
+                                    condtions.append(False)
+                            if all(condtions):
+                                part.remove_pos(int(remove))
+                                print('removeing', remove, 'from',f'({part.x},{part.y})')
+                            
 
 
 
@@ -339,7 +286,7 @@ def main():
 
 
 
-    for x in range(30):
+    for x in range(60):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -364,6 +311,8 @@ def main():
                 pass
         if x > 15:
             trip_pair(good_box)
+            trip_pair(good_col)
+            trip_pair(good_row)
             pass
 
         for i in range(9):
