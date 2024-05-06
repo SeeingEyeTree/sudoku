@@ -132,7 +132,7 @@ def trip_pair(boxs):
                             pair_up.append(i)
 
                 if len(pair_up) == 3:
-                    print(master,'nice box',pair_up[0].box, pair_up[0].possibilities,pair_up[1].possibilities,pair_up[2].possibilities)
+                    #print(master,'nice box',pair_up[0].box, pair_up[0].possibilities,pair_up[1].possibilities,pair_up[2].possibilities)
                     for remove in str(master):
                         for part in box.parts:
                             condtions = []
@@ -143,7 +143,7 @@ def trip_pair(boxs):
                                     condtions.append(False)
                             if all(condtions):
                                 part.remove_pos(int(remove))
-                                print('removeing', remove, 'from',f'({part.x},{part.y})')
+                                #print('removeing', remove, 'from',f'({part.x},{part.y})')
                             
 
 
@@ -194,7 +194,7 @@ def main():
 
 
     while False:
-        match_templat(board_img_gray,nine_w,0.85,True)
+        match_templat(board_img_gray,three_w,0.85,True)
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
@@ -202,7 +202,7 @@ def main():
 
 
     board = set_up_board(board , match_templat(board_img_gray,one_w,0.85) , 1)
-    board = set_up_board(board , match_templat(board_img_gray,two_w,0.9) , 2)
+    board = set_up_board(board , match_templat(board_img_gray,two_w,0.85) , 2)
     board = set_up_board(board , match_templat(board_img_gray,three_w,0.9) , 3)
     board = set_up_board(board , match_templat(board_img_gray,four_w,0.9) , 4)
     board = set_up_board(board , match_templat(board_img_gray,five_w,0.9) , 5)
@@ -286,7 +286,7 @@ def main():
 
 
 
-    for x in range(60):
+    for x in range(100):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -336,8 +336,12 @@ def main():
 
    
     show_board(board)
-    x = 6
-    y = 6
+    x = 8
+    y = 0
+    print(f'({x},{y})', board[x][y].possibilities)
+    x = 8
+    y = 8
+    print(f'({x},{y})', board[x][y].possibilities)
 
 if __name__ == '__main__':
     main()

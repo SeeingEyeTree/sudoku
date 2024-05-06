@@ -14,4 +14,4 @@ def farm(n):
         sleep(10)
 
 
-farm(10)
+farm(20)
