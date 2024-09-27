@@ -42,7 +42,7 @@ def trim_all(board):
             obj.trim(obj.box_mates , obj.h_line_mates, obj.v_line_mates)
 
 
-def genral_pair(line,boxs,l_type):                
+def genral_pair(line,boxs,line_type):                
     for need in line.needs:
         can = []
         for part in line.parts:
@@ -62,7 +62,7 @@ def genral_pair(line,boxs,l_type):
                 #print('enter')
                 remove_from = []
 
-                if l_type == 'col':
+                if line_type == 'col':
                     y = can[0].y  
                     if 0 <= y and y < 3:
                         remove_box = boxs[0]
@@ -70,7 +70,7 @@ def genral_pair(line,boxs,l_type):
                         remove_box = boxs[1]
                     else:
                         remove_box = boxs[2]
-                elif l_type == 'row':
+                elif line_type == 'row':
                     x = can[0].x
                     if 0 <= x and x <= 2:
                         remove_box = boxs[0]
@@ -80,10 +80,10 @@ def genral_pair(line,boxs,l_type):
                         remove_box = boxs[2]
 
                     for i in remove_box.parts:
-                        if l_type == 'col':
+                        if line_type == 'col':
                             if i.x != line.parts[0].x and i.value == 0:
                                 remove_from.append(i)
-                        elif l_type == 'row':
+                        elif line_type == 'row':
                             if i.y != line.parts[0].y and i.value == 0:
                                 remove_from.append(i)
 
@@ -144,33 +144,81 @@ def trip_pair(boxs):
                                 part.remove_pos(int(remove))
                                 #print('removeing', remove, 'from',f'({part.x},{part.y})')
                             
-
-def box_elim(box_grouped):
-    #row_grouped = box_grouped[0][0].parts[0].x == box_grouped[1]
-    condtions_met = False
-    if True:
-        for test in box_grouped:
-            #test[0] is row 
-            #test[1] is box
-            box = test[0]
-            rows = test[1]
-            for remove_value in range(1, 9):
+'''
+def box_elim(box_grouped, row):
+    for test in box_grouped:
+        print(test)
+        boxs = test[1]
+        row = test[0]
+        found = False
+        for box in boxs:
+            for remove_value in row.needs:
                 positions = box.cords_of_possibilities(remove_value)
+                condtions_met = True
                 for element in positions:
-                    if positions[0][0] != element[0]:
-                        condtions_met = False
-                        break
+                    condtions_met = True
+                    if row:
+                        row_x = row.parts[0].x
+                        print('Row_x is', row_x, 'element is', element)
+                        if element[0] != row_x:
+                            break
+
                     else:
-                        condtions_met = True
+                        col_x = row.parts[0].x
+                        if positions[0][0] != element[0] and positions[0][0] == row_x:
+                            condtions_met = False
+                            break
+                        else:
+                            condtions_met = True                        
 
-                if condtions_met:
-                    for row in rows:
-                        if row.parts[0].x == positions[0][0]:
-                            for cell in row:
-                                if cell.y != box[0].y and cell.y != box[3]  and cell.y != box[6]:
-                                    cell.remove(remove_value)
+            if condtions_met:
+                if row:
+                    for cell in row.parts:
+                        if cell.y != box.parts[0].y and cell.y != box.parts[3].y  and cell.y != box.parts[6].y:
+                            cell.remove_pos(remove_value)
+                            found = True
+                            print("found")
+                    if found:
+                        return found
+'''
 
 
+def all_equal(check_list, value_to_check):
+    for value in check_list:
+        if value != value_to_check:
+            return False
+    return True
+
+
+def pointing_pairs(line_box_group, row):
+
+    for grouping in line_box_group:
+        row = grouping[0]
+        boxes = grouping[1]
+
+        for box in boxes:
+            for test_remove_value in row.needs:
+                possible_locations = box.cords_of_possibilities(test_remove_value)
+
+                if len(possible_locations) == 0:
+                    continue
+                if row:
+                    possible_locations_x = []
+
+                    for i in possible_locations:
+                        possible_locations_x.append(i[0])
+
+                    if not all_equal(possible_locations_x, row.parts[0].x):
+                        break
+
+                    if row:
+                        for cell in row.parts:
+                            if cell.y != box.parts[0].y and cell.y != box.parts[3].y and cell.y != box.parts[6].y:
+                                cell.remove_pos(test_remove_value)
+
+
+
+        
 
 
 def show_board(board):
@@ -234,6 +282,7 @@ def main():
     board = set_up_board(board , match_templat(board_img_gray,eight_w,0.9) , 8)
     board = set_up_board(board , match_templat(board_img_gray,nine_w,0.85) , 9)
 
+    show_board(board)
 
     # Set up the same box and line since it cannot be done when intilised
     all_box = []
@@ -308,47 +357,64 @@ def main():
         col_box_group.append([good_col[i],box_set_3])
 
 
+    for i in range(30): 
+        trim_all(board)    
 
-    for x in range(40):
-        trim_all(board)
-        for i in all_row:
-            i.last_one()
-        for i in all_box:
-            i.last_one()
-        for i in all_col:
-            i.last_one()
-        
+    no_change = 0
+    for x in range(200):
+
         before_board = [[0 for col in range(9)] for row in range(9)]
         for i in range(9):
             for j in range(9):
                 before_board[i][j] = copy.deepcopy(board[i][j])
                 pass
+
+        for i in range(2): 
+            trim_all(board)
+            pass
+        for i in all_row:
+            i.last_one()
+            pass
+        for i in all_box:
+            i.last_one()
+            pass
+        for i in all_col:
+            i.last_one()
+            pass
+        
         
         if x > 10:
             for i in col_box_group:
                 genral_pair(i[0],i[1],'col')
                 pass
-        if x>10 and x % 5  == 0 :
+                
+        if x > 10:
             for i in row_box_group:
                 genral_pair(i[0],i[1],'row')
                 pass
+                
         if x > 15:
             trip_pair(good_box)
             trip_pair(good_col)
             trip_pair(good_row)
             pass
 
-        if x > 20:
-            box_elim(row_box_group)
+        if x > 18:
+            pointing_pairs(row_box_group, True)
+            pass
 
-        '''
+        
         for i in range(9):
             for j in range(9):
                 if len(before_board[i][j].possibilities) != len(board[i][j].possibilities):
-                    #print('Before',before_board[i][j].possibilities, 'After',board[i][j].possibilities,f'({i},{j})') 
-                    pass
-        '''
-                      
+                    print('Before',before_board[i][j].possibilities, 'After',board[i][j].possibilities,f'({i},{j})') 
+                    no_change = 0
+                else:
+                    no_change += 1
+        
+        if no_change >= 810:
+            break
+                        
         total = 0
         for i in board:
             for j in i:
@@ -365,11 +431,11 @@ def main():
 
    
     show_board(board)
-    x = 8
-    y = 0
+    x = 1
+    y = 7
     print(f'({x},{y})', board[x][y].possibilities)
-    x = 8
-    y = 8
+    x = 3
+    y = 1
     print(f'({x},{y})', board[x][y].possibilities)
 
 if __name__ == '__main__':

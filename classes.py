@@ -24,7 +24,7 @@ class Cell():
 		self.v_line_mates = v_line
 		#I know it does not need to be reacluated every time but will fix later what class is for
 
-		if len(self.possibilities)>1:
+		if len(self.possibilities) > 1:
 			for i in self.box_mates:
 				self.possibilities = np.delete(self.possibilities , np.where(self.possibilities == i.value)[0])
 				self.needed_b = np.delete(self.needed_b , np.where(self.needed_b == i.value)[0])
