@@ -71,13 +71,13 @@ class BHV():
 				can[0][0].possibilities = []
 
 
-		def cords_of_possibilities(self, check_for):
-			positions = []
-			for cell in self.parts:
-				for cell_posablity in cell.possibilities:
-					if cell_posablity == check_for:
-						positions.append([cell.x , cell.y])
-			return positions
+	def cords_of_possibilities(self, check_for):
+		positions = []
+		for cell in self.parts:
+			for cell_posablity in cell.possibilities:
+				if cell_posablity == check_for:
+					positions.append([cell.x , cell.y])
+		return positions
 
 
 

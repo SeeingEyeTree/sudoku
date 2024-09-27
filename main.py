@@ -25,7 +25,7 @@ nine_w = imread("./images/nine_w.png",cv2.IMREAD_GRAYSCALE)
 
 #bounds for a 2560 * 1600 screen top (383,380) bot (1132,1129)
 #one cell is ~83.2222222222 84 pixles tall and wide 84*84
-#time.sleep(1)
+#time.sleep(2)
 
 
 def any_good(listp, condtion, opprand='e'):
@@ -154,8 +154,6 @@ def box_elim(box_grouped):
             #test[1] is box
             box = test[0]
             rows = test[1]
-
-            print(rows)
             for remove_value in range(1, 9):
                 positions = box.cords_of_possibilities(remove_value)
                 for element in positions:
@@ -311,7 +309,7 @@ def main():
 
 
 
-    for x in range(200):
+    for x in range(40):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -375,4 +373,5 @@ def main():
     print(f'({x},{y})', board[x][y].possibilities)
 
 if __name__ == '__main__':
+    time.sleep(3)
     main()
