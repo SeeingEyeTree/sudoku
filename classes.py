@@ -17,6 +17,7 @@ class Cell():
 		self.v_line_mates = []
 		self.box_mates = []
 
+
 	def trim(self, box, h_line, v_line):
 		self.box_mates = box
 		self.h_line_mates = h_line
@@ -43,6 +44,7 @@ class Cell():
 			self.value =  self.possibilities[0]
 			self.possibilities = np.array([])
 
+
 	def remove_pos(self,remove):
 		self.possibilities = np.delete(self.possibilities , np.where(self.possibilities == remove)[0])
 
@@ -52,6 +54,7 @@ class BHV():
 		self.parts = parts
 		#self.name = name
 		self.needs = np.array([1,2,3,4,5,6,7,8,9])
+
 
 	def last_one(self):
 		for i in self.parts:
@@ -68,11 +71,13 @@ class BHV():
 				can[0][0].possibilities = []
 
 
-
-
-
-
-
+		def cords_of_possibilities(self, check_for):
+			positions = []
+			for cell in self.parts:
+				for cell_posablity in cell.possibilities:
+					if cell_posablity == check_for:
+						positions.append([cell.x , cell.y])
+			return positions
 
 
 

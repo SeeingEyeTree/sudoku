@@ -20,7 +20,7 @@ def input_board(board):
             elif j.value == 5:
                 PR(FIVE)
             elif j.value == 6:
-                PR(SIX)
+                #PR(SIX)
                 pass
             elif j.value == 7:
                 PR(SEVEN)

@@ -13,23 +13,22 @@ import copy
 PYTHONBREAKPOINT = 0 # I know there is a module just don't feel like learing it right now 
 
 # read in all refrance images
-one_w=imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
-two_w=imread("./images/two_w.png",cv2.IMREAD_GRAYSCALE)
-three_w=imread("./images/three_w.png",cv2.IMREAD_GRAYSCALE)
-four_w=imread("./images/four_w.png",cv2.IMREAD_GRAYSCALE)
-five_w=imread("./images/five_w.png",cv2.IMREAD_GRAYSCALE)
-six_w=imread("./images/six_w.png",cv2.IMREAD_GRAYSCALE)
-seven_w=imread("./images/seven_w.png",cv2.IMREAD_GRAYSCALE)
-eight_w=imread("./images/eight_w.png",cv2.IMREAD_GRAYSCALE)
-nine_w=imread("./images/nine_w.png",cv2.IMREAD_GRAYSCALE)
+one_w = imread("./images/one_w.png",cv2.IMREAD_GRAYSCALE)
+two_w = imread("./images/two_w.png",cv2.IMREAD_GRAYSCALE)
+three_w = imread("./images/three_w.png",cv2.IMREAD_GRAYSCALE)
+four_w = imread("./images/four_w.png",cv2.IMREAD_GRAYSCALE)
+five_w = imread("./images/five_w.png",cv2.IMREAD_GRAYSCALE)
+six_w = imread("./images/six_w.png",cv2.IMREAD_GRAYSCALE)
+seven_w = imread("./images/seven_w.png",cv2.IMREAD_GRAYSCALE)
+eight_w = imread("./images/eight_w.png",cv2.IMREAD_GRAYSCALE)
+nine_w = imread("./images/nine_w.png",cv2.IMREAD_GRAYSCALE)
 
 #bounds for a 2560 * 1600 screen top (383,380) bot (1132,1129)
 #one cell is ~83.2222222222 84 pixles tall and wide 84*84
 #time.sleep(1)
 
 
-
-def any_good(listp, condtion,opprand='e'):
+def any_good(listp, condtion, opprand='e'):
     for i in listp:
         if opprand == 'e':
             if i == condition:
@@ -146,6 +145,32 @@ def trip_pair(boxs):
                                 #print('removeing', remove, 'from',f'({part.x},{part.y})')
                             
 
+def box_elim(box_grouped):
+    #row_grouped = box_grouped[0][0].parts[0].x == box_grouped[1]
+    condtions_met = False
+    if True:
+        for test in box_grouped:
+            #test[0] is row 
+            #test[1] is box
+            box = test[0]
+            rows = test[1]
+
+            print(rows)
+            for remove_value in range(1, 9):
+                positions = box.cords_of_possibilities(remove_value)
+                for element in positions:
+                    if positions[0][0] != element[0]:
+                        condtions_met = False
+                        break
+                    else:
+                        condtions_met = True
+
+                if condtions_met:
+                    for row in rows:
+                        if row.parts[0].x == positions[0][0]:
+                            for cell in row:
+                                if cell.y != box[0].y and cell.y != box[3]  and cell.y != box[6]:
+                                    cell.remove(remove_value)
 
 
 
@@ -169,25 +194,25 @@ def main():
             obj.y = j
 
 
-            if i<=2 and j<=2:
+            if i <= 2 and j <= 2:
                 box = 0
-            elif 3<=i<=5 and j<=2:
+            elif 3 <= i <= 5 and j <= 2:
                 box = 1
-            elif 6<=i and j<=2:
+            elif 6 <= i and j <= 2:
                 box = 2
 
-            elif i<=2 and 3<=j<=5:
+            elif i <= 2 and 3 <= j <= 5:
                 box = 3
-            elif 3<=i<=5 and 3<=j<=5:
+            elif 3 <= i <= 5 and 3 <= j <= 5:
                 box = 4
-            elif i>=6 and 3<=j<=5:
+            elif i >= 6 and 3 <= j <= 5:
                 box = 5
 
-            elif i<=2 and j>=6:
+            elif i <= 2 and j >= 6:
                 box = 6
-            elif 3<=i<=5 and j>=6:
+            elif 3 <= i <= 5 and j >= 6:
                 box = 7
-            elif i>=6 and j>=6:
+            elif i >= 6 and j >= 6:
                 box = 8
 
             obj.box = box
@@ -286,7 +311,7 @@ def main():
 
 
 
-    for x in range(100):
+    for x in range(200):
         trim_all(board)
         for i in all_row:
             i.last_one()
@@ -315,15 +340,21 @@ def main():
             trip_pair(good_row)
             pass
 
+        if x > 20:
+            box_elim(row_box_group)
+
+        '''
         for i in range(9):
             for j in range(9):
                 if len(before_board[i][j].possibilities) != len(board[i][j].possibilities):
                     #print('Before',before_board[i][j].possibilities, 'After',board[i][j].possibilities,f'({i},{j})') 
-                    pass  
-        total=0
+                    pass
+        '''
+                      
+        total = 0
         for i in board:
             for j in i:
-                total +=j.value
+                total += j.value
         if total == 405:
             print('Correct')
             break
